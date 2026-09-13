@@ -8,7 +8,7 @@ from auth.auth_session import create_session
 from Schemas.email_code_schema import email_code_schema
 from auth.auth_session import get_current_user
 from pwdlib import PasswordHash
-from sqlalchemy import select
+from Schemas.auth_password import password_schema
 #-----------------------------
 
 #라우터 선언
@@ -61,9 +61,9 @@ def forget_check_email_code( response : Response, user_code: email_code_schema,d
 
 #비밀 번호 변경 인증
 @router_password.post("/api/v1/change/password_auth")
-def auth_password_change(user_know: str, user_data: Users = Depends(get_current_user)):
+def auth_password_change(user_know: password_schema, user_data: Users = Depends(get_current_user)):
     #일치하는지 검증
-    if password_hashing.verify(user_know, user_data.password_hash) is not True:
+    if password_hashing.verify(user_know.password, user_data.password_hash) is not True:
         return {
             "success":False,
             "message": "비밀번호가 일치하지 않습니다."
@@ -77,10 +77,10 @@ def auth_password_change(user_know: str, user_data: Users = Depends(get_current_
 
 #비밀 번호 변경
 @router_password.post("/api/v1/change/password")
-def change_password(user_want : str, db: Session = Depends(Create_db), user: Users = Depends(get_current_user)):
+def change_password(user_want : password_schema, db: Session = Depends(Create_db), user: Users = Depends(get_current_user)):
 
     #비번 해싱
-    hashed = password_hashing.hash(user_want)
+    hashed = password_hashing.hash(user_want.password)
 
     #비번 변경
     user.password_hash = hashed
