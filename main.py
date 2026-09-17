@@ -19,3 +19,8 @@ app.include_router(router_load_state)
 app.include_router(router_logout)
 app.include_router(router_email)
 app.include_router(router_password)
+
+#기본 url 들어갈시 표시
+@app.post("")
+def main_page():
+    return "Hello! This is the main page of Team-J.H.Y!"
