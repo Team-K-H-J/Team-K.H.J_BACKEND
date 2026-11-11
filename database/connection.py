@@ -1,14 +1,7 @@
 import os
-from pathlib import Path
-from dotenv import load_dotenv
 from sqlalchemy import URL, create_engine
 from sqlalchemy.orm import sessionmaker
-
-# 프로젝트 최상위 폴더 경로
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-#.env 파일 읽기
-load_dotenv(BASE_DIR / ".env")
+import config  # noqa: F401 -- register models or load environment
 
 # .env에서 MySQL 접속 정보 가져오기
 DB_HOST = os.getenv("DB_HOST")
@@ -29,7 +22,11 @@ DATABASE_URL = URL.create(
 )
 
 # DB 연결 관리자 생성
-engine = create_engine(DATABASE_URL)
+engine = create_engine(
+    os.getenv("DATABASE_URL") or DATABASE_URL,
+    pool_pre_ping=True,
+    hide_parameters=True,
+)
 
 #서버 연결 테스트
 """
@@ -47,6 +44,9 @@ def Create_db():
 
     try:
         yield db
+    except Exception:
+        db.rollback()
+        raise
     finally:
         db.close()
 

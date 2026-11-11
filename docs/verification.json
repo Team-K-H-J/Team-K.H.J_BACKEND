@@ -1,0 +1,71 @@
+{
+  "verified_on": "2026-11-08 Asia/Seoul",
+  "scope": "Initial implementation before deferred features were removed",
+  "live_http": {
+    "/health": 200,
+    "/docs": 200,
+    "/openapi.json": 200,
+    "/api/v1/state/all": 200,
+    "/api/v1/devices": 200,
+    "/api/v1/notices": 200,
+    "/api/v1/guide": 200,
+    "/api/v1/info": 200,
+    "/api/v1/users/me": 401,
+    "/api/v1/admin/devices": 401
+  },
+  "openapi_paths": 50,
+  "openapi_operations": 60,
+  "notion_operations_preserved": 15,
+  "mysql_version": "8.4.13",
+  "domain_tables": 22,
+  "tables_including_alembic": 23,
+  "test_suites": {
+    "mysql": {
+      "tests": "52",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "10.173"
+    },
+    "sqlite": {
+      "tests": "52",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "1",
+      "time": "8.773"
+    }
+  },
+  "smtp_authentication": "Gmail SMTP authenticated; real signup mail, code check and account signup succeeded",
+  "mobile_push": "provider mocked; live FCM credentials not provided",
+  "workbench": "26.10.0 GUI connected to development schema; all 23 tables listed",
+  "esp32_backend": {
+    "schema_revision": "0003",
+    "mysql_migration_with_existing_events": "passed in a temporary MySQL database",
+    "real_loopback_http": "passed against Uvicorn with a temporary MySQL database",
+    "live_device_endpoints_without_key": 401,
+    "physical_esp32": "pending completed firmware protocol and device access"
+  },
+  "after_deferred_feature_removal": {
+    "verified_on": "2026-11-09 Asia/Seoul",
+    "openapi_paths": 44,
+    "openapi_operations": 53,
+    "notion_operations_preserved": 14,
+    "notion_active_views_match_openapi": true,
+    "retired_operations_return_404": 7,
+    "test_suites": {
+      "mysql": {"passed": 49, "skipped": 0},
+      "sqlite": {"passed": 48, "skipped": 1}
+    }
+  },
+  "after_optional_api_removal": {
+    "openapi_paths": 41,
+    "openapi_operations": 50,
+    "notion_operations_preserved": 14,
+    "notion_active_views_match_openapi": true,
+    "retired_operations_return_404": 10,
+    "test_suites": {
+      "mysql": {"passed": 49, "skipped": 0},
+      "sqlite": {"passed": 48, "skipped": 1}
+    }
+  }
+}

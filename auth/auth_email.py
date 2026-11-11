@@ -1,102 +1,87 @@
+import hashlib
+import hmac
+import os
 import secrets
-import time
-from email.message import EmailMessage
 import smtplib
 import ssl
-import os
-from Schemas.auth_email_schema import auth_email_schema
-from Schemas.email_code_schema import email_code_schema
-from dotenv import load_dotenv
-from pathlib import Path
-#--------------
+from datetime import timedelta
+from email.message import EmailMessage
 
-#인증 번호 저장 변수 선언
-contify_code = {}
+from fastapi import HTTPException
+from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Session
 
-# 프로젝트 최상위 폴더 경로
-BASE_DIR = Path(__file__).resolve().parent.parent
+import config  # noqa: F401 -- register models or load environment
+from models.account import Email_Verification
+from services.common import utcnow
 
-#.env 파일 읽기
-load_dotenv(BASE_DIR / ".env")
 
-# .env에서 발송 메일 정보 가져오기
-sender_email = os.getenv("GMAIL_ADDRESS")
-password = os.getenv("GMAIL_APP_PASSWORD")
+def code_digest(email: str, purpose: str, code: str) -> str:
+    secret = os.getenv("EMAIL_CODE_SECRET")
+    if not secret:
+        raise HTTPException(503, "이메일 인증 설정이 필요합니다.")
+    return hmac.new(secret.encode(), f"{email}:{purpose}:{code}".encode(), hashlib.sha256).hexdigest()
 
-#인증 번호 만들고 발송해 주는 함수
-def make_and_send_email_number(user_email:auth_email_schema) -> str:
 
-    #인증 번호 생성
-    email_number = f"{secrets.randbelow(1_000_000):06d}"
-
-     #인증 번호 만료 시간 계산
-    expires_at = time.monotonic() + 300
-    
-    #인증번호, 만료 시간 저장
-    contify_code[user_email.email] = {
-        "email_code":email_number,
-        "expires_at":expires_at
-    }
-
-    #메세지 변수 선언
+def make_and_send_email_number(user_email, db: Session, purpose: str = "signup"):
+    email = str(getattr(user_email, "email", user_email)).lower()
+    now = utcnow()
+    if db.get(Email_Verification, (email, purpose)) is None:
+        try:
+            with db.begin_nested():
+                db.add(Email_Verification(email=email, purpose=purpose, code_hash="0" * 64,
+                       expires_at=now, sent_at=now - timedelta(days=1), attempts=0))
+                db.flush()
+        except IntegrityError:
+            # Another worker completed the first request while we waited.
+            pass
+    record = db.scalar(select(Email_Verification).where(
+        Email_Verification.email == email, Email_Verification.purpose == purpose)
+        .with_for_update().execution_options(populate_existing=True))
+    if record and (now - record.sent_at).total_seconds() < 30:
+        raise HTTPException(429, "인증번호는 30초 후 다시 요청해 주세요.")
+    code = f"{secrets.randbelow(1_000_000):06d}"
+    digest = code_digest(email, purpose, code)
+    sender = os.getenv("GMAIL_ADDRESS")
+    password = os.getenv("GMAIL_APP_PASSWORD")
+    if not sender or not password:
+        raise HTTPException(503, "메일 발송 설정이 필요합니다.")
     message = EmailMessage()
-    
-    #이메일 메세지 작성
-    message["From"] = sender_email
-    message["To"] = user_email.email
-    message["Subject"] = "J.H.Y-이메일 인증번호"
-    message.set_content("인증 번호는 "+contify_code[user_email.email]["email_code"]+" 입니다.")
-
-    #Gmail SMTP 연결 및 발송
-    context = ssl.create_default_context()
-    
-    with smtplib.SMTP_SSL(
-        "smtp.gmail.com",
-        465,
-        context=context,
-        timeout=10,
-    ) as smtp:
-        smtp.login(sender_email, password)
-        smtp.send_message(message)
-    
-    return {
-        "success":True,
-        "message": "메일 발송 성공"
-    }
+    message["From"], message["To"], message["Subject"] = sender, email, "J.H.Y-이메일 인증번호"
+    message.set_content("인증 번호는 " + code + " 입니다.")
+    try:
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=ssl.create_default_context(), timeout=10) as smtp:
+            smtp.login(sender, password)
+            smtp.send_message(message)
+    except (smtplib.SMTPException, OSError):
+        db.rollback()
+        raise HTTPException(503, "메일을 발송하지 못했습니다. 잠시 후 다시 시도해 주세요.") from None
+    if record is None:
+        record = Email_Verification(email=email, purpose=purpose)
+        db.add(record)
+    record.code_hash, record.sent_at = digest, now
+    record.expires_at = now + timedelta(minutes=5)
+    record.attempts, record.verified_at = 0, None
+    db.commit()
+    return {"success": True, "message": "메일 발송 성공"}
 
 
-#인증 번호 검증 함수
-def check_email_number(user_code:email_code_schema):
-
-    #기존 email 인증 검증
-    code = contify_code.get(user_code.email)
-    
-    #기존 인증 여부 검증
-    if code is None:
-        return {
-            "success":False,
-            "massage":"이메일이 옳지 않습니다."
-        }
-
-    #만료 시간 검증
-    if time.monotonic() >= code["expires_at"]:
-        contify_code.pop(user_code.email, None)
-        return  {
-        "success":False,
-        "massage":"시간 초과"
-    }
-
-    #인증 번호 일치 여부 검증
-    if code["email_code"] != user_code.code:
-        return {
-            "success":False,
-            "massage":"인증 실패"
-        }
-
-    #인증 번호 삭제
-    contify_code.pop(user_code.email, None)
-    
-    return {
-        "success":True,
-        "massage":"인증 성공"
-    }
+def check_email_number(user_code, db: Session, purpose: str = "signup"):
+    email = str(user_code.email).lower()
+    record = db.scalar(select(Email_Verification).where(
+        Email_Verification.email == email, Email_Verification.purpose == purpose).with_for_update())
+    if record is None:
+        return {"success": False, "massage": "이메일이 옳지 않습니다."}
+    if utcnow() >= record.expires_at:
+        db.delete(record)
+        db.commit()
+        return {"success": False, "massage": "시간 초과"}
+    if record.attempts >= 5 or record.verified_at is not None:
+        return {"success": False, "massage": "인증 실패"}
+    record.attempts += 1
+    valid = hmac.compare_digest(record.code_hash, code_digest(email, purpose, user_code.code))
+    if valid:
+        record.verified_at = utcnow()
+    db.commit()
+    return {"success": valid, "massage": "인증 성공" if valid else "인증 실패"}

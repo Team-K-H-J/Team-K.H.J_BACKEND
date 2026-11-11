@@ -2,6 +2,7 @@ from datetime import datetime
 
 from sqlalchemy import DateTime, ForeignKey, String, BINARY, func
 from sqlalchemy.orm import Mapped, mapped_column
+from uuid import uuid4
 
 from database.base import Base
 
@@ -11,7 +12,8 @@ class Subscribe_log(Base):
 
     id: Mapped[bytes] = mapped_column(
         BINARY(16),
-        primary_key=True
+        primary_key=True,
+        default=lambda: uuid4().bytes,
     )
 
     device_id: Mapped[str] = mapped_column(
@@ -36,4 +38,4 @@ class Subscribe_log(Base):
         String(15),
         nullable=False,
         server_default="not_subscribed",
-    ) 
+    )

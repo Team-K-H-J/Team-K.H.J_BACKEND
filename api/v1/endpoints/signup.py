@@ -5,6 +5,9 @@ from pwdlib import PasswordHash
 from database.connection import Create_db
 from Schemas.signup_schema import SignupData
 from models.users import Users
+from models.account import Email_Verification
+from services.common import utcnow
+from sqlalchemy.exc import IntegrityError
 
 #--------------------------------
 
@@ -24,17 +27,25 @@ def signup(User_data: SignupData, db: Session = Depends(Create_db)):
     )
 
     if exist_user is not None:
-        return HTTPException(
+        raise HTTPException(
             status_code = 409,
             detail = "이미 사용중인 이메일입니다."
         )
+
+    email = str(User_data.email).lower()
+    verification = db.scalar(select(Email_Verification).where(
+        Email_Verification.email == email,
+        Email_Verification.purpose == "signup"
+    ).with_for_update())
+    if verification is None or verification.verified_at is None or verification.expires_at <= utcnow():
+        raise HTTPException(403, "이메일 인증을 먼저 완료해 주세요.")
 
     #비번 해싱
     hashed = password_hashing.hash(User_data.password)
 
     #User 객체 생성
     new_user = Users(
-        email = User_data.email,
+        email = email,
         password_hash = hashed,
         name = User_data.name,
         number = User_data.number
@@ -42,7 +53,12 @@ def signup(User_data: SignupData, db: Session = Depends(Create_db)):
 
     #User 객체 저장
     db.add(new_user)
-    db.commit()
+    db.delete(verification)
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(409, "이미 사용중인 이메일입니다.") from None
 
     return{
 		 "success": True,

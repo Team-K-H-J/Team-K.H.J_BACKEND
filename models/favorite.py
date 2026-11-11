@@ -1,11 +1,12 @@
-from datetime import datetime
 
-from sqlalchemy import BINARY, ForeignKey, String, func
+from sqlalchemy import BINARY, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from database.base import Base
 
 class Favorite(Base):
+    """Historical favorites retained for account deletion and schema compatibility."""
+
     __tablename__ = "favorite"
 
     device_id: Mapped[str] = mapped_column(
@@ -19,5 +20,4 @@ class Favorite(Base):
             ForeignKey("users.user_id"),
             primary_key=True,
             nullable=False,
-            unique=True
     )

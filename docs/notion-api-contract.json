@@ -1,0 +1,93 @@
+[
+  {
+    "name": "비밀 번호 찾기에서 인증번호 검증",
+    "method": "POST",
+    "path": "/api/v1/forget/check/email_code",
+    "source": "https://app.notion.com/060324836d4f8282b8360149fdf6e7c7"
+  },
+  {
+    "name": "비밀번호 변경시 기존 비번 인증",
+    "method": "POST",
+    "path": "/api/v1/change/password_auth",
+    "source": "https://app.notion.com/342324836d4f82dd9a648185dbb84151"
+  },
+  {
+    "name": "사용자 로그인",
+    "method": "POST",
+    "path": "/api/v1/users/login",
+    "source": "https://app.notion.com/4cc324836d4f83b299db012b486e258a"
+  },
+  {
+    "name": "사용자  비변 변경 요청",
+    "method": "POST",
+    "path": "/api/v1/change/password",
+    "source": "https://app.notion.com/4e2324836d4f838988c281afa9879e19"
+  },
+  {
+    "name": "건조기  즐겨 찾기 추가",
+    "method": "POST",
+    "path": "/api/v1/faverite",
+    "retired": true,
+    "source": "https://app.notion.com/51a324836d4f83f8ad000183533aabd7"
+  },
+  {
+    "name": "비밀 번호찾기에서 사용자 정보 검사 및 인증 번호 발송",
+    "method": "POST",
+    "path": "/api/v1/forget/password",
+    "source": "https://app.notion.com/54a324836d4f8315a2f801c6afa0b938"
+  },
+  {
+    "name": "사용자 로그아웃",
+    "method": "POST",
+    "path": "/api/v1/logout",
+    "source": "https://app.notion.com/839324836d4f8276864001cb6c4799ce"
+  },
+  {
+    "name": "장치 상태 개별 조회",
+    "method": "GET",
+    "path": "/api/v1/state/{device_id}",
+    "source": "https://app.notion.com/8e8324836d4f8314bf6381e9b8bac7f0"
+  },
+  {
+    "name": "장치 상태 전체 조회",
+    "method": "GET",
+    "path": "/api/v1/state/all",
+    "source": "https://app.notion.com/9eb324836d4f82f1b42b81d435bf7e8d"
+  },
+  {
+    "name": "이메일 인증코드 검사",
+    "method": "POST",
+    "path": "/api/v1/check/email_code",
+    "source": "https://app.notion.com/c97324836d4f8272807c01ed6814e7cd"
+  },
+  {
+    "name": "알림 받을 건조기 선택",
+    "method": "POST",
+    "path": "/api/v1/subscribe/add",
+    "source": "https://app.notion.com/d7b324836d4f8371949301d16c3b5323"
+  },
+  {
+    "name": "사용 건조기 선택 취소",
+    "method": "DELETE",
+    "path": "/api/v1/subscribe/delete/{device_name}",
+    "source": "https://app.notion.com/e7c324836d4f8300a3108157c2986cc2"
+  },
+  {
+    "name": "사용자 회원가입 이메일 인증 번호 발송",
+    "method": "POST",
+    "path": "/api/v1/signup/email",
+    "source": "https://app.notion.com/fce324836d4f82e9b73c01e94cce28c3"
+  },
+  {
+    "name": "사용자 회원가입",
+    "method": "POST",
+    "path": "/api/v1/users/signup",
+    "source": "https://app.notion.com/ff7324836d4f8201bc808188a88f293d"
+  },
+  {
+    "name": "장치 상태 업데이트",
+    "method": "PATCH",
+    "path": "/api/v1/state/{device_id}",
+    "source": "https://app.notion.com/e1c324836d4f83fab7008123791258bb"
+  }
+]

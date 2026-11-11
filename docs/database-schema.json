@@ -1,0 +1,1604 @@
+[
+  {
+    "name": "cycle_user",
+    "columns": [
+      {
+        "name": "cycle_id",
+        "type": "BINARY(16)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "user_id",
+        "type": "BINARY(16)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "subscribed_at",
+        "type": "DATETIME",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      }
+    ],
+    "primary_key": [
+      "cycle_id",
+      "user_id"
+    ],
+    "foreign_keys": [
+      {
+        "name": "cycle_user_ibfk_1",
+        "constrained_columns": [
+          "cycle_id"
+        ],
+        "referred_schema": null,
+        "referred_table": "drying_cycle",
+        "referred_columns": [
+          "id"
+        ],
+        "options": {}
+      },
+      {
+        "name": "cycle_user_ibfk_2",
+        "constrained_columns": [
+          "user_id"
+        ],
+        "referred_schema": null,
+        "referred_table": "users",
+        "referred_columns": [
+          "user_id"
+        ],
+        "options": {
+          "ondelete": "CASCADE"
+        }
+      }
+    ],
+    "unique_constraints": [],
+    "indexes": [
+      {
+        "name": "user_id",
+        "column_names": [
+          "user_id"
+        ],
+        "unique": false
+      }
+    ]
+  },
+  {
+    "name": "device_credential",
+    "columns": [
+      {
+        "name": "device_id",
+        "type": "VARCHAR(24)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "key_hash",
+        "type": "VARCHAR(64)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      }
+    ],
+    "primary_key": [
+      "device_id"
+    ],
+    "foreign_keys": [
+      {
+        "name": "device_credential_ibfk_1",
+        "constrained_columns": [
+          "device_id"
+        ],
+        "referred_schema": null,
+        "referred_table": "devices",
+        "referred_columns": [
+          "device_id"
+        ],
+        "options": {}
+      }
+    ],
+    "unique_constraints": [],
+    "indexes": []
+  },
+  {
+    "name": "device_runtime",
+    "columns": [
+      {
+        "name": "device_id",
+        "type": "VARCHAR(24)",
+        "default": null,
+        "comment": null,
+        "nullable": false
+      },
+      {
+        "name": "unavailable",
+        "type": "TINYINT",
+        "default": null,
+        "comment": null,
+        "nullable": false,
+        "autoincrement": false
+      },
+      {
+        "name": "unavailable_reason",
+        "type": "VARCHAR(255)",
+        "default": null,
+        "comment": null,
+        "nullable": true
+      },
+      {
+        "name": "sensor_error",
+        "type": "VARCHAR(255)",
+        "default": null,
+        "comment": null,
+        "nullable": true
+      },
+      {
+        "name": "door_open",
+        "type": "TINYINT",
+        "default": null,
+        "comment": null,
+        "nullable": true,
+        "autoincrement": false
+      },
+      {
+        "name": "last_seen_at",
+        "type": "DATETIME",
+        "default": null,
+        "comment": null,
+        "nullable": true
+      },
+      {
+        "name": "last_measured_at",
+        "type": "DATETIME",
+        "default": null,
+        "comment": null,
+        "nullable": true
+      },
+      {
+        "name": "cycle_status",
+        "type": "VARCHAR(16)",
+        "default": null,
+        "comment": null,
+        "nullable": false
+      },
+      {
+        "name": "expected_seconds",
+        "type": "INTEGER",
+        "default": null,
+        "comment": null,
+        "nullable": false,
+        "autoincrement": false
+      },
+      {
+        "name": "last_door_measured_at",
+        "type": "DATETIME",
+        "default": null,
+        "comment": null,
+        "nullable": true
+      }
+    ],
+    "primary_key": [
+      "device_id"
+    ],
+    "foreign_keys": [
+      {
+        "name": "device_runtime_ibfk_1",
+        "constrained_columns": [
+          "device_id"
+        ],
+        "referred_schema": null,
+        "referred_table": "devices",
+        "referred_columns": [
+          "device_id"
+        ],
+        "options": {}
+      }
+    ],
+    "unique_constraints": [],
+    "indexes": []
+  },
+  {
+    "name": "devices",
+    "columns": [
+      {
+        "name": "device_id",
+        "type": "VARCHAR(24)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "device_name",
+        "type": "VARCHAR(24)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      }
+    ],
+    "primary_key": [
+      "device_id"
+    ],
+    "foreign_keys": [],
+    "unique_constraints": [
+      {
+        "name": "device_name",
+        "column_names": [
+          "device_name"
+        ],
+        "duplicates_index": "device_name"
+      }
+    ],
+    "indexes": [
+      {
+        "name": "device_name",
+        "column_names": [
+          "device_name"
+        ],
+        "unique": true,
+        "type": "UNIQUE"
+      }
+    ]
+  },
+  {
+    "name": "drying_cycle",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BINARY(16)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "device_id",
+        "type": "VARCHAR(24)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "started_at",
+        "type": "DATETIME",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "ended_at",
+        "type": "DATETIME",
+        "nullable": true,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "collected_at",
+        "type": "DATETIME",
+        "nullable": true,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "outcome",
+        "type": "VARCHAR(16)",
+        "nullable": true,
+        "default": null,
+        "autoincrement": false
+      }
+    ],
+    "primary_key": [
+      "id"
+    ],
+    "foreign_keys": [
+      {
+        "name": "drying_cycle_ibfk_1",
+        "constrained_columns": [
+          "device_id"
+        ],
+        "referred_schema": null,
+        "referred_table": "devices",
+        "referred_columns": [
+          "device_id"
+        ],
+        "options": {}
+      }
+    ],
+    "unique_constraints": [],
+    "indexes": [
+      {
+        "name": "ix_cycle_device_started",
+        "column_names": [
+          "device_id",
+          "started_at"
+        ],
+        "unique": false
+      }
+    ]
+  },
+  {
+    "name": "email_verification",
+    "columns": [
+      {
+        "name": "email",
+        "type": "VARCHAR(255)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "purpose",
+        "type": "VARCHAR(16)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "code_hash",
+        "type": "VARCHAR(64)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "expires_at",
+        "type": "DATETIME",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "sent_at",
+        "type": "DATETIME",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "attempts",
+        "type": "INTEGER",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "verified_at",
+        "type": "DATETIME",
+        "nullable": true,
+        "default": null,
+        "autoincrement": false
+      }
+    ],
+    "primary_key": [
+      "email",
+      "purpose"
+    ],
+    "foreign_keys": [],
+    "unique_constraints": [],
+    "indexes": []
+  },
+  {
+    "name": "favorite",
+    "columns": [
+      {
+        "name": "device_id",
+        "type": "VARCHAR(24)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "user_id",
+        "type": "BINARY(16)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      }
+    ],
+    "primary_key": [
+      "device_id",
+      "user_id"
+    ],
+    "foreign_keys": [
+      {
+        "name": "favorite_ibfk_1",
+        "constrained_columns": [
+          "device_id"
+        ],
+        "referred_schema": null,
+        "referred_table": "devices",
+        "referred_columns": [
+          "device_id"
+        ],
+        "options": {}
+      },
+      {
+        "name": "favorite_ibfk_2",
+        "constrained_columns": [
+          "user_id"
+        ],
+        "referred_schema": null,
+        "referred_table": "users",
+        "referred_columns": [
+          "user_id"
+        ],
+        "options": {}
+      }
+    ],
+    "unique_constraints": [],
+    "indexes": [
+      {
+        "name": "user_id",
+        "column_names": [
+          "user_id"
+        ],
+        "unique": false
+      }
+    ]
+  },
+  {
+    "name": "inquiry",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BINARY(16)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "user_id",
+        "type": "BINARY(16)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "device_id",
+        "type": "VARCHAR(24)",
+        "nullable": true,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "error_type",
+        "type": "VARCHAR(64)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "title",
+        "type": "VARCHAR(200)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "content",
+        "type": "TEXT",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "status",
+        "type": "VARCHAR(16)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      }
+    ],
+    "primary_key": [
+      "id"
+    ],
+    "foreign_keys": [
+      {
+        "name": "inquiry_ibfk_1",
+        "constrained_columns": [
+          "device_id"
+        ],
+        "referred_schema": null,
+        "referred_table": "devices",
+        "referred_columns": [
+          "device_id"
+        ],
+        "options": {}
+      },
+      {
+        "name": "inquiry_ibfk_2",
+        "constrained_columns": [
+          "user_id"
+        ],
+        "referred_schema": null,
+        "referred_table": "users",
+        "referred_columns": [
+          "user_id"
+        ],
+        "options": {
+          "ondelete": "CASCADE"
+        }
+      }
+    ],
+    "unique_constraints": [],
+    "indexes": [
+      {
+        "name": "device_id",
+        "column_names": [
+          "device_id"
+        ],
+        "unique": false
+      },
+      {
+        "name": "ix_inquiry_status_created",
+        "column_names": [
+          "status",
+          "created_at"
+        ],
+        "unique": false
+      },
+      {
+        "name": "user_id",
+        "column_names": [
+          "user_id"
+        ],
+        "unique": false
+      }
+    ]
+  },
+  {
+    "name": "login_attempt",
+    "columns": [
+      {
+        "name": "email",
+        "type": "VARCHAR(255)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "failures",
+        "type": "INTEGER",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "locked_until",
+        "type": "DATETIME",
+        "nullable": true,
+        "default": null,
+        "autoincrement": false
+      }
+    ],
+    "primary_key": [
+      "email"
+    ],
+    "foreign_keys": [],
+    "unique_constraints": [],
+    "indexes": []
+  },
+  {
+    "name": "notice",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BINARY(16)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "author_id",
+        "type": "BINARY(16)",
+        "nullable": true,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "title",
+        "type": "VARCHAR(200)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "content",
+        "type": "TEXT",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "pinned",
+        "type": "TINYINT",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      }
+    ],
+    "primary_key": [
+      "id"
+    ],
+    "foreign_keys": [
+      {
+        "name": "notice_ibfk_1",
+        "constrained_columns": [
+          "author_id"
+        ],
+        "referred_schema": null,
+        "referred_table": "users",
+        "referred_columns": [
+          "user_id"
+        ],
+        "options": {
+          "ondelete": "SET NULL"
+        }
+      }
+    ],
+    "unique_constraints": [],
+    "indexes": [
+      {
+        "name": "author_id",
+        "column_names": [
+          "author_id"
+        ],
+        "unique": false
+      }
+    ]
+  },
+  {
+    "name": "notification",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BINARY(16)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "user_id",
+        "type": "BINARY(16)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "device_id",
+        "type": "VARCHAR(24)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "cycle_id",
+        "type": "BINARY(16)",
+        "nullable": true,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "event_key",
+        "type": "VARCHAR(128)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "kind",
+        "type": "VARCHAR(16)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "message",
+        "type": "VARCHAR(255)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "read_at",
+        "type": "DATETIME",
+        "nullable": true,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "delivered_at",
+        "type": "DATETIME",
+        "nullable": true,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "delivery_attempts",
+        "type": "INTEGER",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "next_attempt_at",
+        "type": "DATETIME",
+        "nullable": true,
+        "default": null,
+        "autoincrement": false
+      }
+    ],
+    "primary_key": [
+      "id"
+    ],
+    "foreign_keys": [
+      {
+        "name": "notification_ibfk_1",
+        "constrained_columns": [
+          "cycle_id"
+        ],
+        "referred_schema": null,
+        "referred_table": "drying_cycle",
+        "referred_columns": [
+          "id"
+        ],
+        "options": {}
+      },
+      {
+        "name": "notification_ibfk_2",
+        "constrained_columns": [
+          "device_id"
+        ],
+        "referred_schema": null,
+        "referred_table": "devices",
+        "referred_columns": [
+          "device_id"
+        ],
+        "options": {}
+      },
+      {
+        "name": "notification_ibfk_3",
+        "constrained_columns": [
+          "user_id"
+        ],
+        "referred_schema": null,
+        "referred_table": "users",
+        "referred_columns": [
+          "user_id"
+        ],
+        "options": {
+          "ondelete": "CASCADE"
+        }
+      }
+    ],
+    "unique_constraints": [
+      {
+        "name": "uq_notification_user_event",
+        "column_names": [
+          "user_id",
+          "event_key"
+        ],
+        "duplicates_index": "uq_notification_user_event"
+      }
+    ],
+    "indexes": [
+      {
+        "name": "cycle_id",
+        "column_names": [
+          "cycle_id"
+        ],
+        "unique": false
+      },
+      {
+        "name": "device_id",
+        "column_names": [
+          "device_id"
+        ],
+        "unique": false
+      },
+      {
+        "name": "ix_notification_user_id",
+        "column_names": [
+          "user_id"
+        ],
+        "unique": false
+      },
+      {
+        "name": "uq_notification_user_event",
+        "column_names": [
+          "user_id",
+          "event_key"
+        ],
+        "unique": true,
+        "type": "UNIQUE"
+      }
+    ]
+  },
+  {
+    "name": "push_delivery",
+    "columns": [
+      {
+        "name": "notification_id",
+        "type": "BINARY(16)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "token",
+        "type": "VARCHAR(512)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "delivered_at",
+        "type": "DATETIME",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      }
+    ],
+    "primary_key": [
+      "notification_id",
+      "token"
+    ],
+    "foreign_keys": [
+      {
+        "name": "push_delivery_ibfk_1",
+        "constrained_columns": [
+          "notification_id"
+        ],
+        "referred_schema": null,
+        "referred_table": "notification",
+        "referred_columns": [
+          "id"
+        ],
+        "options": {
+          "ondelete": "CASCADE"
+        }
+      },
+      {
+        "name": "push_delivery_ibfk_2",
+        "constrained_columns": [
+          "token"
+        ],
+        "referred_schema": null,
+        "referred_table": "push_token",
+        "referred_columns": [
+          "token"
+        ],
+        "options": {
+          "ondelete": "CASCADE"
+        }
+      }
+    ],
+    "unique_constraints": [],
+    "indexes": [
+      {
+        "name": "token",
+        "column_names": [
+          "token"
+        ],
+        "unique": false
+      }
+    ]
+  },
+  {
+    "name": "push_token",
+    "columns": [
+      {
+        "name": "token",
+        "type": "VARCHAR(512)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "user_id",
+        "type": "BINARY(16)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "session_id",
+        "type": "VARCHAR(255)",
+        "nullable": true,
+        "default": null,
+        "autoincrement": false
+      }
+    ],
+    "primary_key": [
+      "token"
+    ],
+    "foreign_keys": [
+      {
+        "name": "push_token_ibfk_1",
+        "constrained_columns": [
+          "user_id"
+        ],
+        "referred_schema": null,
+        "referred_table": "users",
+        "referred_columns": [
+          "user_id"
+        ],
+        "options": {
+          "ondelete": "CASCADE"
+        }
+      },
+      {
+        "name": "push_token_ibfk_2",
+        "constrained_columns": [
+          "session_id"
+        ],
+        "referred_schema": null,
+        "referred_table": "session",
+        "referred_columns": [
+          "session_id"
+        ],
+        "options": {
+          "ondelete": "CASCADE"
+        }
+      }
+    ],
+    "unique_constraints": [],
+    "indexes": [
+      {
+        "name": "ix_push_token_user_id",
+        "column_names": [
+          "user_id"
+        ],
+        "unique": false
+      },
+      {
+        "name": "session_id",
+        "column_names": [
+          "session_id"
+        ],
+        "unique": false
+      }
+    ]
+  },
+  {
+    "name": "session",
+    "columns": [
+      {
+        "name": "session_id",
+        "type": "VARCHAR(255)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "user_id",
+        "type": "BINARY(16)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME",
+        "nullable": false,
+        "default": "(now())",
+        "autoincrement": false
+      },
+      {
+        "name": "expired_at",
+        "type": "DATETIME",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "purpose",
+        "type": "VARCHAR(16)",
+        "nullable": false,
+        "default": "'login'",
+        "autoincrement": false
+      },
+      {
+        "name": "password_verified_at",
+        "type": "DATETIME",
+        "nullable": true,
+        "default": null,
+        "autoincrement": false
+      }
+    ],
+    "primary_key": [
+      "session_id"
+    ],
+    "foreign_keys": [
+      {
+        "name": "session_ibfk_1",
+        "constrained_columns": [
+          "user_id"
+        ],
+        "referred_schema": null,
+        "referred_table": "users",
+        "referred_columns": [
+          "user_id"
+        ],
+        "options": {}
+      }
+    ],
+    "unique_constraints": [],
+    "indexes": [
+      {
+        "name": "user_id",
+        "column_names": [
+          "user_id"
+        ],
+        "unique": false
+      }
+    ]
+  },
+  {
+    "name": "state",
+    "columns": [
+      {
+        "name": "device_id",
+        "type": "VARCHAR(24)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "state",
+        "type": "VARCHAR(9)",
+        "nullable": false,
+        "default": "'not_used'",
+        "autoincrement": false
+      },
+      {
+        "name": "updated_at",
+        "type": "DATETIME",
+        "nullable": false,
+        "default": "(now())",
+        "autoincrement": false
+      }
+    ],
+    "primary_key": [
+      "device_id"
+    ],
+    "foreign_keys": [
+      {
+        "name": "state_ibfk_1",
+        "constrained_columns": [
+          "device_id"
+        ],
+        "referred_schema": null,
+        "referred_table": "devices",
+        "referred_columns": [
+          "device_id"
+        ],
+        "options": {}
+      }
+    ],
+    "unique_constraints": [],
+    "indexes": []
+  },
+  {
+    "name": "state_log",
+    "columns": [
+      {
+        "name": "state_log_id",
+        "type": "BIGINT",
+        "nullable": false,
+        "default": null,
+        "autoincrement": true
+      },
+      {
+        "name": "device_id",
+        "type": "VARCHAR(24)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "state",
+        "type": "VARCHAR(15)",
+        "nullable": false,
+        "default": "'not_used'",
+        "autoincrement": false
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME",
+        "nullable": false,
+        "default": "(now())",
+        "autoincrement": false
+      }
+    ],
+    "primary_key": [
+      "state_log_id"
+    ],
+    "foreign_keys": [
+      {
+        "name": "state_log_ibfk_1",
+        "constrained_columns": [
+          "device_id"
+        ],
+        "referred_schema": null,
+        "referred_table": "devices",
+        "referred_columns": [
+          "device_id"
+        ],
+        "options": {}
+      }
+    ],
+    "unique_constraints": [],
+    "indexes": [
+      {
+        "name": "ix_state_log_device_time_state",
+        "column_names": [
+          "device_id",
+          "created_at",
+          "state"
+        ],
+        "unique": false
+      }
+    ]
+  },
+  {
+    "name": "subscribe",
+    "columns": [
+      {
+        "name": "device_id",
+        "type": "VARCHAR(24)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "user_id",
+        "type": "BINARY(16)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      }
+    ],
+    "primary_key": [
+      "device_id",
+      "user_id"
+    ],
+    "foreign_keys": [
+      {
+        "name": "subscribe_ibfk_1",
+        "constrained_columns": [
+          "device_id"
+        ],
+        "referred_schema": null,
+        "referred_table": "devices",
+        "referred_columns": [
+          "device_id"
+        ],
+        "options": {}
+      },
+      {
+        "name": "subscribe_ibfk_2",
+        "constrained_columns": [
+          "user_id"
+        ],
+        "referred_schema": null,
+        "referred_table": "users",
+        "referred_columns": [
+          "user_id"
+        ],
+        "options": {}
+      }
+    ],
+    "unique_constraints": [],
+    "indexes": [
+      {
+        "name": "ix_subscribe_user_device",
+        "column_names": [
+          "user_id",
+          "device_id"
+        ],
+        "unique": false
+      }
+    ]
+  },
+  {
+    "name": "subscribe_log",
+    "columns": [
+      {
+        "name": "id",
+        "type": "BINARY(16)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "device_id",
+        "type": "VARCHAR(24)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "user_id",
+        "type": "BINARY(16)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "created_at",
+        "type": "DATETIME",
+        "nullable": false,
+        "default": "(now())",
+        "autoincrement": false
+      },
+      {
+        "name": "state",
+        "type": "VARCHAR(15)",
+        "nullable": false,
+        "default": "'not_subscribed'",
+        "autoincrement": false
+      }
+    ],
+    "primary_key": [
+      "id"
+    ],
+    "foreign_keys": [
+      {
+        "name": "subscribe_log_ibfk_1",
+        "constrained_columns": [
+          "device_id"
+        ],
+        "referred_schema": null,
+        "referred_table": "devices",
+        "referred_columns": [
+          "device_id"
+        ],
+        "options": {}
+      },
+      {
+        "name": "subscribe_log_ibfk_2",
+        "constrained_columns": [
+          "user_id"
+        ],
+        "referred_schema": null,
+        "referred_table": "users",
+        "referred_columns": [
+          "user_id"
+        ],
+        "options": {}
+      }
+    ],
+    "unique_constraints": [],
+    "indexes": [
+      {
+        "name": "device_id",
+        "column_names": [
+          "device_id"
+        ],
+        "unique": false
+      },
+      {
+        "name": "user_id",
+        "column_names": [
+          "user_id"
+        ],
+        "unique": false
+      }
+    ]
+  },
+  {
+    "name": "telemetry_event",
+    "columns": [
+      {
+        "name": "device_id",
+        "type": "VARCHAR(24)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "event_id",
+        "type": "VARCHAR(64)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "measured_at",
+        "type": "DATETIME",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "received_at",
+        "type": "DATETIME",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "payload_hash",
+        "type": "VARCHAR(64)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "payload",
+        "type": "JSON",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      }
+    ],
+    "primary_key": [
+      "device_id",
+      "event_id"
+    ],
+    "foreign_keys": [
+      {
+        "name": "telemetry_event_ibfk_1",
+        "constrained_columns": [
+          "device_id"
+        ],
+        "referred_schema": null,
+        "referred_table": "devices",
+        "referred_columns": [
+          "device_id"
+        ],
+        "options": {}
+      }
+    ],
+    "unique_constraints": [],
+    "indexes": [
+      {
+        "name": "ix_telemetry_device_measured",
+        "column_names": [
+          "device_id",
+          "measured_at"
+        ],
+        "unique": false
+      }
+    ]
+  },
+  {
+    "name": "user_profile",
+    "columns": [
+      {
+        "name": "user_id",
+        "type": "BINARY(16)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "image_url",
+        "type": "VARCHAR(2048)",
+        "nullable": true,
+        "default": null,
+        "autoincrement": false
+      }
+    ],
+    "primary_key": [
+      "user_id"
+    ],
+    "foreign_keys": [
+      {
+        "name": "user_profile_ibfk_1",
+        "constrained_columns": [
+          "user_id"
+        ],
+        "referred_schema": null,
+        "referred_table": "users",
+        "referred_columns": [
+          "user_id"
+        ],
+        "options": {
+          "ondelete": "CASCADE"
+        }
+      }
+    ],
+    "unique_constraints": [],
+    "indexes": []
+  },
+  {
+    "name": "user_settings",
+    "columns": [
+      {
+        "name": "user_id",
+        "type": "BINARY(16)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "notifications_enabled",
+        "type": "TINYINT",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "vibration_enabled",
+        "type": "TINYINT",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "theme",
+        "type": "VARCHAR(8)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "completed",
+        "type": "TINYINT",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "paused",
+        "type": "TINYINT",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "stopped",
+        "type": "TINYINT",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "uncollected",
+        "type": "TINYINT",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      }
+    ],
+    "primary_key": [
+      "user_id"
+    ],
+    "foreign_keys": [
+      {
+        "name": "user_settings_ibfk_1",
+        "constrained_columns": [
+          "user_id"
+        ],
+        "referred_schema": null,
+        "referred_table": "users",
+        "referred_columns": [
+          "user_id"
+        ],
+        "options": {
+          "ondelete": "CASCADE"
+        }
+      }
+    ],
+    "unique_constraints": [],
+    "indexes": []
+  },
+  {
+    "name": "users",
+    "columns": [
+      {
+        "name": "user_id",
+        "type": "BINARY(16)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "email",
+        "type": "VARCHAR(255)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "password_hash",
+        "type": "VARCHAR(255)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "name",
+        "type": "VARCHAR(24)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      },
+      {
+        "name": "number",
+        "type": "VARCHAR(4)",
+        "nullable": false,
+        "default": null,
+        "autoincrement": false
+      }
+    ],
+    "primary_key": [
+      "user_id"
+    ],
+    "foreign_keys": [],
+    "unique_constraints": [
+      {
+        "name": "email",
+        "column_names": [
+          "email"
+        ],
+        "duplicates_index": "email"
+      },
+      {
+        "name": "password_hash",
+        "column_names": [
+          "password_hash"
+        ],
+        "duplicates_index": "password_hash"
+      }
+    ],
+    "indexes": [
+      {
+        "name": "email",
+        "column_names": [
+          "email"
+        ],
+        "unique": true,
+        "type": "UNIQUE"
+      },
+      {
+        "name": "password_hash",
+        "column_names": [
+          "password_hash"
+        ],
+        "unique": true,
+        "type": "UNIQUE"
+      }
+    ]
+  }
+]

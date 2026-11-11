@@ -1,9 +1,10 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, ForeignKey, String, BINARY, func
+from sqlalchemy import ForeignKey, String, BINARY, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from database.base import Base
+from database.types import UTCDateTime
 
 class Session_Model(Base):
     __tablename__ = "session"
@@ -20,12 +21,15 @@ class Session_Model(Base):
     )
 
     created_at: Mapped[datetime] = mapped_column(
-        DateTime,
+        UTCDateTime,
         nullable=False,
         server_default=func.now()
     )
 
     expired_at: Mapped[datetime] = mapped_column(
-        DateTime,
+        UTCDateTime,
         nullable=False
     )
+
+    purpose: Mapped[str] = mapped_column(String(16), default="login", server_default="login")
+    password_verified_at: Mapped[datetime | None] = mapped_column(UTCDateTime)

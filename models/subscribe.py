@@ -1,6 +1,5 @@
-from datetime import datetime
 
-from sqlalchemy import DateTime, ForeignKey, String, func, BINARY
+from sqlalchemy import ForeignKey, String, BINARY, Index
 from sqlalchemy.orm import Mapped, mapped_column
 
 from database.base import Base
@@ -8,6 +7,7 @@ from database.base import Base
 
 class Subscribe(Base):
     __tablename__ = "subscribe"
+    __table_args__ = (Index("ix_subscribe_user_device", "user_id", "device_id"),)
 
     device_id: Mapped[str] = mapped_column(
         String(24),
@@ -18,6 +18,7 @@ class Subscribe(Base):
     user_id: Mapped[bytes] = mapped_column(
         BINARY(16),
         ForeignKey("users.user_id"),
+        primary_key=True,
         nullable=False,
     )
 """

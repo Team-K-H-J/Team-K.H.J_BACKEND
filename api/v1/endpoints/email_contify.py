@@ -38,12 +38,12 @@ def signup_email_contify(user_email:auth_email_schema, db:Session = Depends(Crea
     )
     
     if exist_user is not None:
-        return HTTPException(
+        raise HTTPException(
             status_code = 409,
             detail = "이미 사용중인 이메일입니다."
         )
 
-    make_and_send_email_number(user_email)
+    make_and_send_email_number(user_email, db)
 
     return {
         "success":True
@@ -52,10 +52,10 @@ def signup_email_contify(user_email:auth_email_schema, db:Session = Depends(Crea
 
 #이메일 인증 번호 검증 함수
 @router_email.post("/api/v1/check/email_code")
-def email_code_check(user_code:email_code_schema):
+def email_code_check(user_code:email_code_schema, db: Session = Depends(Create_db)):
 
     #인증 검중 함수 호출
-    result = check_email_number(user_code)
+    result = check_email_number(user_code, db)
 
     if result["success"] is False:
         return result
