@@ -1,8 +1,9 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.exc import DBAPIError, SQLAlchemyError
 from contextlib import asynccontextmanager
 import asyncio
+import logging
 from config import flag
 from services.notifications import worker
 
@@ -20,6 +21,8 @@ from api.v1.endpoints.notices import router_notices
 from api.v1.endpoints.inquiries import router_inquiries
 from api.v1.endpoints.notifications import router_notifications
 from api.v1.endpoints.info import router_info
+
+logger = logging.getLogger(__name__)
 #--------------------------------
 #API 호출
 @asynccontextmanager
@@ -56,6 +59,12 @@ app.include_router(router_info)
 
 @app.exception_handler(SQLAlchemyError)
 async def database_error(request, error):
+    if isinstance(error, DBAPIError):
+        args = getattr(error.orig, "args", ())
+        code = args[0] if args and type(args[0]) is int else None
+        logger.warning("Database request failed (%s, driver code %s).", type(error).__name__, code)
+    else:
+        logger.warning("Database request failed (%s).", type(error).__name__)
     return JSONResponse(status_code=503, content={"detail": "데이터베이스 요청을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요."})
 
 #기본 url 들어갈시 표시
